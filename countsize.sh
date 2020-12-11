@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # -------------------------------------------
-FOLDERS=/home/user/Desktop/samba/Folders
-#FILE=/home/user/Desktop/samba/Folders/
-DIR_TRASH=/home/user/Desktop/samba/Trash/
+#путь к папкам
+FOLDERS="$(pwd)/Folders"
+DIR_TRASH="$(pwd)/Trash"
 # -------------------------------------------
 
 #очищаем массив
@@ -27,8 +27,9 @@ for i in ${array[@]}; do
                         SIZE=$(du -s "$j" | cut -f1)
 
                         #Выводим размер
-                        echo $SIZE
+                        #echo $SIZE
 
+                        #проверка размера папки, если > 4Гб, то в корзину
                         if (($SIZE > 4000000)); then
                                 echo "Размер папки превышен"
                                 mv "$j" $DIR_TRASH
