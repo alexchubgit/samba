@@ -11,17 +11,16 @@ HOST="127.0.0.1"
 # -------------------------------------------
 
 #проверка соединения с базой данных и отмена вывода ошибок
-if mysql --user=$USER --password=$PASSWD --host=$HOST -e "USE phones" 2>/dev/null; then
-    echo 'A database already exists'
-else
+if ! mysql --user=$USER --password=$PASSWD --host=$HOST -e "USE phones" 2>/dev/null; then
     echo "A database does not exist."
     exit 0
+
 fi
 
 SIGN=0
 
 #Пользователи с личными телефонами. Если личный пустой, то служебный
-mysql phones --user=$USER --password=$PASSWD --host=$HOST -B -N -s -e "SELECT IF(cellular IS NULL OR cellular = '', business, cellular) FROM persons;" | (
+mysql phones --user=$USER --password=$PASSWD --host=$HOST -B -N -s -e "SELECT IF(cellular IS NULL OR cellular = '', business, cellular) FROM persons;" 2>/dev/null | (
     while read -r mysql; do
         if [ ! -z "$mysql" ]; then
 
@@ -39,7 +38,7 @@ mysql phones --user=$USER --password=$PASSWD --host=$HOST -B -N -s -e "SELECT IF
 
                 #если указатель не равен 0, то пользователь есть в базе данных
                 if [ "$SIGN" -eq "0" ]; then
-                    echo "userdel $mysql"
+                    echo "userdel $passwd"
 
                 fi
 

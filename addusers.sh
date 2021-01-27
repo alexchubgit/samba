@@ -8,6 +8,8 @@ USER="root"
 #HOST="10.80.32.116"
 PASSWD="ju0jiL"
 HOST="127.0.0.1"
+
+PASSWDSMB="123456"
 # -------------------------------------------
 
 #проверка соединения с базой данных и отмена вывода ошибок
@@ -17,35 +19,51 @@ if ! mysql --user=$USER --password=$PASSWD --host=$HOST -e "USE phones" 2>/dev/n
 
 fi
 
-#Пользователи с личными телефонами. Если личный пустой, то служебный
-mysql phones --user=$USER --password=$PASSWD --host=$HOST -t -N -e "SELECT IF(cellular IS NULL OR cellular = '', business, cellular), abbr, passwd FROM persons LEFT JOIN depart USING (iddep) WHERE abbr IS NOT NULL;" | (
-    while read -r line; do
+#очищаем массив
+unset dep
 
-        if [ ! -z $(echo $line | awk -F'|' '{print $2}') ]; then
+#заполняем его строками файла deplist
+dep=($(cat "listdep"))
 
-            #echo $line
+#обход каждого пункта из массива подразделений
+for i in ${dep[@]}; do
 
-            echo $line | awk -F'|' '{print $2}'
+    echo "$i"
 
-            #попробовать логин и пароль сделать одинаковыми
-            #до появления решения
+    #Пользователи с личными телефонами. Если личный пустой, то служебный
+    mysql phones --user=$USER --password=$PASSWD --host=$HOST -t -N -e "SELECT IF(cellular IS NULL OR cellular = '', business, cellular), abbr, passwd FROM persons LEFT JOIN depart USING (iddep) WHERE abbr = '$i'" 2>/dev/null | (
+        while read -r line; do
 
-            #echo $line | awk '{print $NF}'
+            if [ ! -z $(echo $line | awk -F'|' '{print $2}') ]; then
 
-            # const passwd = 123456;
+                #echo $line
 
-            # //Добавить юзера
-            #echo "echo idEt38 | sudo -S  useradd -G  + group + '' + $line"
+                PHONE=$(echo $line | awk -F'|' '{print $2}')
+                #echo $PHONE
 
-            # //Добавить samba юзера
-            #"echo idEt38 | (echo " + passwd + "; echo " + passwd + ") | sudo -S  smbpasswd -a " + $line
+                #переменную из списка подразделений переводим в название группы
+                GROUP=$(echo $i | awk '{print tolower($0)}')
+                #echo $GROUP
 
-            # //Добавить юзера в группу
-            #"echo idEt38 | sudo -S usermod -g " + group + " " + $line
+                #echo $line | awk '{print $NF}'
 
-            #Удалить группу по телефону
-            #"echo idEt38 | sudo -S groupdel " + $line
+                #Добавить юзера
+                echo idEt38 | sudo -S useradd -G $GROUP $PHONE
 
-        fi
-    done
-)
+                #Добавить samba юзера
+                echo idEt38 | (
+                    echo $PASSWDSMB
+                    echo $PASSWDSMB
+                ) | sudo -S smbpasswd -a $PHONE
+
+                #Добавить юзера в группу
+                #echo idEt38 | sudo -S usermod -g $GROUP $PHONE
+
+                #Удалить группу по телефону
+                #echo idEt38 | sudo -S groupdel $PHONE
+
+            fi
+        done
+    )
+
+done

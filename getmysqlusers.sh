@@ -13,7 +13,7 @@ echo "из базы данных"
 
 > listusers
 
-mysql phones -u$USER -p$PASSWD -h$HOST -B -N -s -e "SELECT cellular,  IF(cellular IS NULL OR cellular = ' ', business, cellular), IF(business IS NULL OR business = ' ', '99999999999', cellular) FROM persons" | while read -r j; do
+mysql phones -u$USER -p$PASSWD -h$HOST -B -N -s -e "SELECT cellular,  IF(cellular IS NULL OR cellular = ' ', business, cellular), IF(business IS NULL OR business = ' ', '99999999999', cellular) FROM persons" 2>/dev/null | while read -r j; do
 
     if [ ! -z "$j" ]; then
         echo "$j" | cut -f1 >> listusers

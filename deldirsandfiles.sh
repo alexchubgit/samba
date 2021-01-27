@@ -48,7 +48,7 @@ for i in ${dep[@]}; do
             SIGN=0
 
             #достаем имена пользователей в базе для названий папок
-            mysql phones --user=$USER --password=$PASSWD --host=$HOST -B -N -s -e "SELECT name FROM persons LEFT JOIN depart USING (iddep)  WHERE abbr = '$i'" | (
+            mysql phones --user=$USER --password=$PASSWD --host=$HOST -B -N -s -e "SELECT name FROM persons LEFT JOIN depart USING (iddep)  WHERE abbr = '$i'" 2>/dev/null | (
                 while read -r line; do
                     if [ ! -z "$line" ]; then
                         if [ "$(basename -- "$j")" = "$line" ]; then

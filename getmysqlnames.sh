@@ -13,7 +13,7 @@ echo "из базы данных"
 
 > listnames
 
-mysql phones -u$USER -p$PASSWD -h$HOST -B -N -s -e "SELECT name FROM persons" | while read -r j; do
+mysql phones -u$USER -p$PASSWD -h$HOST -B -N -s -e "SELECT name FROM persons" 2>/dev/null | while read -r j; do
 
     if [ ! -z "$j" ]; then
         echo "$j" | cut -f1 >> listnames

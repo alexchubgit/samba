@@ -31,7 +31,10 @@ for i in ${dep[@]}; do
 
     echo "$i"
 
-    mysql phones --user=$USER --password=$PASSWD --host=$HOST -B -N -s -e "SELECT name FROM persons LEFT JOIN depart USING (iddep) WHERE abbr = '$i'" | (
+    #переменную из списка подразделений переводим в название группы
+    GROUP=$(echo $i | awk '{print tolower($0)}')
+
+    mysql phones --user=$USER --password=$PASSWD --host=$HOST -B -N -s -e "SELECT name FROM persons LEFT JOIN depart USING (iddep) WHERE abbr = '$i'" 2>/dev/null | (
         while read -r line; do
             if [ ! -z "$line" ]; then
 
@@ -44,7 +47,14 @@ for i in ${dep[@]}; do
                     echo "Папка отсутствует"
                     mkdir "$FOLDERS/$i/$line"
                 fi
+
             fi
+
         done
     )
+
+    #присваиваем группу папке и назначаем права
+    chgrp -R "$GROUP" "$FOLDERS/$i/"
+    chmod -R 775 "$FOLDERS/$i/"
+
 done
