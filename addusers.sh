@@ -4,9 +4,9 @@
 
 #доступ к базе MySQL
 USER="root"
-#PASSWD="idEt38"
+#PASSWD=""
 #HOST="10.80.32.116"
-PASSWD="ju0jiL"
+PASSWD=""
 HOST="127.0.0.1"
 
 PASSWDSMB="123456"
