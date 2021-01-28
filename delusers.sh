@@ -17,35 +17,22 @@ if ! mysql --user=$USER --password=$PASSWD --host=$HOST -e "USE phones" 2>/dev/n
 
 fi
 
-SIGN=0
+#достаем пользователей из /etc/passwd
+grep -o '[0-9]\{11\}' /etc/passwd | uniq | while read -r file; do
 
-#Пользователи с личными телефонами. Если личный пустой, то служебный
-mysql phones --user=$USER --password=$PASSWD --host=$HOST -B -N -s -e "SELECT IF(cellular IS NULL OR cellular = '', business, cellular) FROM persons;" 2>/dev/null | (
-    while read -r mysql; do
-        if [ ! -z "$mysql" ]; then
+    #echo "file $file" | grep 3432
+    # if [ ! -z $file ]; then
 
-            echo $mysql
+    #указатель для проверки
+    SIGN=0
 
-            #достаем пользователей из /etc/passwd
-            grep -o '[0-9]\{11\}' /etc/passwd | uniq | while read -r passwd; do
+    RESULT=$(mysql phones --user=$USER --password=$PASSWD --host=$HOST -BNe "SELECT 1 FROM persons WHERE cellular = $file OR business = $file" 2>/dev/null)
 
-                #echo "$passwd"
+    #echo $RESULT
 
-                if [ "$mysql" = "$passwd" ]; then
-                    #при совпадении указатель меняем
-                    SIGN=1
-                fi
+    if [[ "$RESULT" -eq "0" ]]; then
+        echo "delete $file"   
+        userdel $file  
+    fi
 
-                #если указатель не равен 0, то пользователь есть в базе данных
-                if [ "$SIGN" -eq "0" ]; then
-                    echo "userdel $passwd"
-
-                fi
-
-            done
-
-        fi
-
-    done
-
-)
+done

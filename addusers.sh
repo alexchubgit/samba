@@ -48,13 +48,20 @@ for i in ${dep[@]}; do
                 #echo $line | awk '{print $NF}'
 
                 #Добавить юзера
-                echo idEt38 | sudo -S useradd -G $GROUP $PHONE
+                #echo idEt38 | sudo -S useradd -G $GROUP $PHONE
+                useradd $PHONE -g $GROUP 
+                adduser $PHONE $GROUP
 
                 #Добавить samba юзера
-                echo idEt38 | (
+                # echo idEt38 | (
+                #     echo $PASSWDSMB
+                #     echo $PASSWDSMB
+                # ) | sudo -S smbpasswd -a $PHONE
+
+                (
                     echo $PASSWDSMB
                     echo $PASSWDSMB
-                ) | sudo -S smbpasswd -a $PHONE
+                ) | smbpasswd -a $PHONE
 
                 #Добавить юзера в группу
                 #echo idEt38 | sudo -S usermod -g $GROUP $PHONE
