@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 # -------------------------------------------
+#путь к папкам
+FOLDERS="$(dirname $0)/Folders"
+DIR_TRASH="$(dirname $0)/Trash"
+DIR_ROOT="$(dirname $0)"
+# -------------------------------------------
 
 #доступ к базе MySQL
 USER="root"
@@ -20,13 +25,13 @@ if ! mysql --user=$USER --password=$PASSWD --host=$HOST -e "USE phones" 2>/dev/n
 fi
 
 #очищаем массив
-unset dep
+unset deps
 
 #заполняем его строками файла deplist
-dep=($(cat "listdep"))
+deps=($(cat "$DIR_ROOT/listdep"))
 
 #обход каждого пункта из массива подразделений
-for i in ${dep[@]}; do
+for i in ${deps[@]}; do
 
     echo "$i"
 
@@ -49,7 +54,7 @@ for i in ${dep[@]}; do
 
                 #Добавить юзера
                 #echo idEt38 | sudo -S useradd -G $GROUP $PHONE
-                useradd $PHONE -g $GROUP 
+                useradd $PHONE -g $GROUP
                 adduser $PHONE $GROUP
 
                 #Добавить samba юзера
@@ -74,3 +79,6 @@ for i in ${dep[@]}; do
     )
 
 done
+
+#после добавления пользователей сбрасываются права
+chmod -R 775 $FOLDERS

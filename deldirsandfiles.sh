@@ -5,8 +5,9 @@
 
 # -------------------------------------------
 #путь к папкам
-FOLDERS="$(pwd)/Folders"
-DIR_TRASH="$(pwd)/Trash"
+FOLDERS="$(dirname $0)/Folders"
+DIR_TRASH="$(dirname $0)/Trash"
+DIR_ROOT="$(dirname $0)"
 
 #доступ к базе MySQL
 USER="root"
@@ -24,13 +25,13 @@ if ! mysql --user=$USER --password=$PASSWD --host=$HOST -e "USE phones" 2>/dev/n
 fi
 
 #очищаем массив
-unset dep
+unset deps
 
 #заполняем его строками файла deplist
-dep=($(cat "listdep"))
+deps=($(cat "$DIR_ROOT/listdep"))
 
 #обход каждого пункта из массива подразделений
-for i in ${dep[@]}; do
+for i in ${deps[@]}; do
 
     #вывод подразделения
     #echo $i

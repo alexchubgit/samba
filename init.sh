@@ -2,14 +2,16 @@
 
 # -------------------------------------------
 #путь к папкам
-FOLDERS="$(pwd)/Folders"
+FOLDERS="$(dirname $0)/Folders"
+DIR_TRASH="$(dirname $0)/Trash"
+DIR_ROOT="$(dirname $0)"
 #--------------------------------------------
 
 #очищаем массив
 unset deps
 
 #заполняем массив строками из файла
-deps=($(cat "listdep"))
+deps=($(cat "$DIR_ROOT/listdep"))
 
 #вывод каждого пункта из массива
 for i in ${deps[@]}; do
