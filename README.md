@@ -8,3 +8,7 @@
 5. Скрипт deldirsandfiles.sh удаляет файлы и папки не соответствующие базе MySQL
 6. Скрипт countsize.sh удаляет файлы из коревых директорий и папки превышающие 4Гб
 7. Скрипт cleartrash.sh очищает удаленные данные из папки Trash
+
+### Licensing
+
+API phones is [MIT licensed](./LICENSE).
