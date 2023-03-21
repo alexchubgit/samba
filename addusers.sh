@@ -19,7 +19,7 @@ PASSWDSMB="123456"
 
 #проверка соединения с базой данных и отмена вывода ошибок
 if ! mysql --user=$USER --password=$PASSWD --host=$HOST -e "USE phones" 2>/dev/null; then
-    echo "A database does not exist."
+    echo "The database does not exist."
     exit 0
 
 fi
